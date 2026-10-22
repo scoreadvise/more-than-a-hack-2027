@@ -1,10 +1,10 @@
 # More than a Hack 2027 – Ballbesitz erkennen
 
-In der ersten Phase von **More than a Hack 2027** entwickeln wir ein Verfahren, das für jedes Videobild eines Fußballspiels bestimmt, welche Mannschaft den Ball besitzt oder ob das Spiel unterbrochen ist. Diese README beschreibt die Aufgabe und die Anforderungen an unsere Abgabe. Code, Notebooks und Ergebnisse werden später ergänzt.
+In der ersten Phase von **More than a Hack 2027** ist die Aufgabe ein Verfahren zu erstellen, das für jedes Videobild eines Fußballspiels erkennt, welche Mannschaft den Ball besitzt oder ob das Spiel unterbrochen ist. Diese README beschreibt die Aufgabe und die Anforderungen an die Abgabe. 
 
 ## Die Aufgabe
 
-Wir arbeiten mit dem Spiel **FC Barcelona gegen Athletic Club**, LaLiga 2024/25, zweiter Spieltag. Für jedes der **199.319 Frames** des taktischen Videos müssen wir genau eines dieser Labels ausgeben:
+Die Daten umfassen das Spiel **FC Barcelona gegen Athletic Club**, LaLiga 2024/25, zweiter Spieltag. Für jedes der **199.319 Frames** des taktischen Videos muss genau eines dieser Labels ausgeben werden:
 
 | Label | Bedeutung |
 | --- | --- |
@@ -15,7 +15,7 @@ Wir arbeiten mit dem Spiel **FC Barcelona gegen Athletic Club**, LaLiga 2024/25,
 
 Ballbesitz wechselt erst, wenn die andere Mannschaft den Ball **kontrolliert** übernimmt. Ein Abpraller oder eine bloße Berührung reicht dafür nicht aus. Bei einem freien oder umkämpften Ball bleibt der Besitz zunächst bei der zuletzt kontrollierenden Mannschaft. Bei einer Unterbrechung lautet das Label `D`, unabhängig davon, wer anschließend fortsetzt. Die [offizielle Aufgabenbeschreibung](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/CHALLENGE.md) erläutert diese Regeln.
 
-## Welche Daten wir bekommen
+## Welche Daten stehen zur Verfügung?
 
 Die Veranstalter stellen zwei Videoaufnahmen mit automatischem Tracking von Spielern und Ball bereit: eine taktische Aufnahme und eine TV-Aufnahme. Dazu kommen Homografien zur Zuordnung von Bild- und Spielfeldkoordinaten sowie automatisch erkannte taktische Phasen und Standardsituationen für die taktische Aufnahme.
 
@@ -33,15 +33,15 @@ Zusätzlich wird **`macroF1`** über die drei Klassen `H`, `A` und `D` berechnet
 
 `X` wird unterschiedlich behandelt: Bei `macroF1` zählt es auf bewerteten Frames als Fehler. Für `spellF1` werden solche Lücken innerhalb jeder Halbzeit mit dem vorherigen Label gefüllt, am Anfang mit dem nächsten verfügbaren Label. Frames außerhalb der bewerteten Bereiche werden ignoriert. Die genaue Berechnung beschreibt die [offizielle Evaluation](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/EVALUATION.md).
 
-## Was wir machen müssen
+## Potentielle Aufgaben
 
 1. **Daten und Zeitachsen prüfen.** Tracking, Video und Zusatzinformationen korrekt zuordnen und die Datenlücken sichtbar machen.
 2. **Die offizielle Baseline nachvollziehen.** Ihre Ergebnisse reproduzieren und untersuchen, wo Ballbesitzwechsel und Unterbrechungen falsch erkannt werden.
-3. **Unser Verfahren entwickeln.** Die Unterscheidung zwischen kontrolliertem Besitz, bloßem Kontakt und ruhendem Spiel algorithmisch umsetzen. Annahmen und Änderungen halten wir in nachvollziehbaren Jupyter-Notebooks fest.
+3. **Unser Verfahren entwickeln.** Die Unterscheidung zwischen kontrolliertem Besitz, bloßem Kontakt und ruhendem Spiel algorithmisch umsetzen. Annahmen und Änderungen ggf. in nachvollziehbaren Jupyter-Notebooks festhalten.
 4. **Die Ausgabe überprüfen.** Ergebnisse mit dem offiziellen Scorer prüfen und Fehler untersuchen. Die kurze öffentliche Referenz darf dabei nicht zur alleinigen Grundlage für die Auswahl und Abstimmung des Verfahrens werden.
 5. **Die Abgabe reproduzierbar machen.** Aus den bereitgestellten Daten muss sich dieselbe CSV erneut erzeugen lassen. Dazu dokumentieren wir Abhängigkeiten, Ausführung und Grenzen des Ansatzes.
 
-## Was wir abgeben müssen
+## Abgabe
 
 Die Abgabe besteht aus drei Teilen:
 
@@ -49,11 +49,11 @@ Die Abgabe besteht aus drei Teilen:
 - **Ein öffentliches Code-Repository**, das die Abgabedatei aus den bereitgestellten Daten exakt reproduzieren kann, einschließlich festgelegter Abhängigkeiten und Ausführungsanleitung.
 - **Eine kurze technische Dokumentation** als PDF oder Markdown: Vorgehen, verwendete Daten, umgesetzte Ballbesitzregeln, Einschränkungen und Reproduktion.
 
-Vor der Einreichung müssen wir die endgültige CSV mit dem offiziellen `validate_submission.py` prüfen. CSV und technisches Dokument werden nach dem Team benannt. Es gibt eine Einreichung pro Team über das von den Veranstaltern per E-Mail bereitgestellte Formular.
+Vor der Einreichung muss die endgültige CSV mit dem offiziellen `validate_submission.py` geprüft werden. CSV und technisches Dokument werden nach dem Team benannt. Es gibt eine Einreichung pro Team über das von den Veranstaltern per E-Mail bereitgestellte Formular.
 
 **Abgabefrist laut offizieller Dokumentation: 17. November 2026.** Maßgeblich sind die [aktuellen Einreichungsvorgaben](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/SUBMISSION.md).
 
-## Regeln für unsere Arbeit
+## Regeln für die Arbeit
 
 Die eingereichten Labels müssen vollständig aus einem Algorithmus stammen. Sie dürfen nicht von Hand erstellt oder nachträglich frameweise korrigiert werden. Die private Referenz und andere Quellen korrigierter Ballbesitzdaten dieses Spiels dürfen wir nicht verwenden.
 

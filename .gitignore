@@ -1,0 +1,46 @@
+# Match assets and local results
+/tactical/
+/broadcast/
+/data/
+/output/
+/_archive/
+/reference/
+/artifacts/**
+!/artifacts/README.md
+!/artifacts/video_event_spotting/
+!/artifacts/video_event_spotting/README.md
+!/artifacts/video_event_spotting/requirements-video-events.txt
+
+# Binary data, models and media
+*.csv
+*.tsv
+*.parquet
+*.npz
+*.npy
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.ckpt
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.pdf
+*.zip
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+._*

@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-30",
+  "notebook_count": 13,
+  "export_sources_identical_to_current_notebooks": true,
+  "outputs_removed": true,
+  "notebooks": [
+    {
+      "path": "main approach/01_vorbereitung/01_vorbereitung.ipynb",
+      "working_notebook_sha256": "b18708de10355cea014ed470fe4892c1de95466e71be087bf1fe829d11489f37",
+      "export_sha256": "258819f3e2c53850eb132729515d1f112e9b3ec6ba5707e053254d203b27e790"
+    },
+    {
+      "path": "main approach/02_spatial_hybrid_v1/02_spatial_hybrid_v1.ipynb",
+      "working_notebook_sha256": "5256d32ac6f49bcab4c19d6b9441aa089fe3a37ed43a4cbc40b60350f63ef983",
+      "export_sha256": "d64baaef68b53f1fb49cb86a6f74b4ffdb129f4eab8727c7fd642c2b2779f3e0"
+    },
+    {
+      "path": "main approach/03_videoaktionen/03_videoaktionen.ipynb",
+      "working_notebook_sha256": "5fff74a9b7cbf63f351337c54f0547c92be9cf224db5ae9dc158085d35d862fc",
+      "export_sha256": "6bd35708ccb021f30783edc67dd9dfcf4ad5c0bdafae157abbed08b4428dc371"
+    },
+    {
+      "path": "main approach/04_kontaktdiagnose/04_kontaktdiagnose.ipynb",
+      "working_notebook_sha256": "955574ea312461d817becbbeed03a11f57b2dfda8eeaf5771da48f97ce912c3e",
+      "export_sha256": "8cd98859ff83b0360ee4a9a349adb34619340e5cb0a5223b15d7b033250c894f"
+    },
+    {
+      "path": "main approach/05_fusionspilot/05_fusionspilot.ipynb",
+      "working_notebook_sha256": "3f3185f3cda0b6d4f9b7305572b7db440ba5cf00ef4a23a721feeff7afd11e2f",
+      "export_sha256": "2a6d9cc4e4039c9493b7a05a6c7d3062fef8680124759d7eb7e356725c7f0728"
+    },
+    {
+      "path": "main approach/05_hierachical_modell.ipynb",
+      "working_notebook_sha256": "ce89f63703224e7ff6891c22ebfc3cd106c1f4f071537926aa4182d8b26d195d",
+      "export_sha256": "132463a6cd6ce7c07208903cfc435a9efa3efdac507cbc8951f32d9a7682ca24"
+    },
+    {
+      "path": "main approach/upstream/04_kontaktbasierte_klassifikation.ipynb",
+      "working_notebook_sha256": "74bf67ac2d6b30c5fc9c3db88b6f50e5623c8b7477e60d8b6d876982c742984d",
+      "export_sha256": "c87861cf16df1e1db43fa843315237534f25270c7370891d2706778f83ce8305"
+    },
+    {
+      "path": "main approach/upstream/06_spielunterbrechungen_untersuchen.ipynb",
+      "working_notebook_sha256": "dab2bc6d5415de01366033eb3547374b00b2f1039c636e9b45cb77d65fb3ffdd",
+      "export_sha256": "9d56f42515f111037dee942531e476ad2502aec47d4a8c543e4974c9ba35c096"
+    },
+    {
+      "path": "main approach/upstream/08_spielstatus_mit_machine_learning.ipynb",
+      "working_notebook_sha256": "0ce20ff7414f15b2c8ac0227cf0e39e5a6f33a753901e4a087c307b2bd37800b",
+      "export_sha256": "30defc1545a4cc1e91e34f790341a5b7811b53ffa5b79afc5916b19a190b9cfb"
+    },
+    {
+      "path": "exploration/01_daten_verstehen.ipynb",
+      "working_notebook_sha256": "369404923fde46d462fc80690f8f0c1ea3085ac968e9c918b638c36a2435eb84",
+      "export_sha256": "11fb8c29ae5cb18df7be6ad2fcfd9ebd1e6f3ff00d2b57908c95ed59194c3f37"
+    },
+    {
+      "path": "exploration/03_ballinteraktionen_untersuchen.ipynb",
+      "working_notebook_sha256": "c7d09587d3585608a08d0915029b445e5ed42331fccf81a56c3fb1f813dce9bf",
+      "export_sha256": "6f2f1eaabba4998e7fedbb8c3271fc28e1213fb3473c1210588878d45e1f088e"
+    },
+    {
+      "path": "exploration/03_tracking_data_checking.ipynb",
+      "working_notebook_sha256": "5505898f2e23e37969b57793d7777d15521f945d1dc686b098ddb3d205d9b093",
+      "export_sha256": "b3512b3fb9e4360cb869c51a553341b670734f33c70e26965d14f7f8a9118fb0"
+    },
+    {
+      "path": "evaluation/02_offizielle_baseline.ipynb",
+      "working_notebook_sha256": "b9ec211253c9dc4be07f7842fee54971f7f3ea5c5d0028c38bce0cefb9de3d5e",
+      "export_sha256": "f8641cb80a1ebc01243a7109d591b7509653b95628124387875c0d40c18ec265"
+    }
+  ]
+}

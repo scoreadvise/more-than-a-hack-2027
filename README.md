@@ -1,60 +1,62 @@
-# More than a Hack 2027 – Ballbesitz erkennen
+# More Than A Hack 2027 · Ballbesitzklassifikation
 
-In der ersten Phase von **More than a Hack 2027** ist die Aufgabe ein Verfahren zu erstellen, das für jedes Videobild eines Fußballspiels erkennt, welche Mannschaft den Ball besitzt oder ob das Spiel unterbrochen ist. Diese README beschreibt die Aufgabe und die Anforderungen an die Abgabe. 
+Wir schätzen für jeden Frame von Barcelona–Athletic ein Label: `H` (Barcelona), `A` (Athletic), `D` (Unterbrechung) oder `X` (keine Aussage). Das taktische Video umfasst 199.319 Frames bei 25 FPS.
 
-## Die Aufgabe
+## Ansatz
 
-Die Daten umfassen das Spiel **FC Barcelona gegen Athletic Club**, LaLiga 2024/25, zweiter Spieltag. Für jedes der **199.319 Frames** des taktischen Videos muss genau eines dieser Labels ausgeben werden:
+**Spatial Hybrid v1 ist der aktuelle Hauptstand.** Physics v3 kombiniert bestehende Statusvorhersagen, Heuristiken und physikalische Evidenz mit Viterbi. Innerhalb von LIVE entstehen H/A-Besitzphasen aus Heuristik- und Kontaktlabels. Der Hybrid richtet bestehende H/A-Grenzen anhand räumlicher Ballnähe zeitlich aus: höchstens ±3 Sekunden, begrenzt durch benachbarte Phasen. D/X und die Phasenfolge bleiben erhalten. Das Verfahren arbeitet offline.
 
-| Label | Bedeutung |
-| --- | --- |
-| `H` | Barcelona hat Ballbesitz, der Ball ist im Spiel. |
-| `A` | Athletic Club hat Ballbesitz, der Ball ist im Spiel. |
-| `D` | Der Ball ist nicht im Spiel, etwa bei einer Unterbrechung. |
-| `X` | Unser Verfahren gibt keine Antwort. |
+Der anschließende Videopilot untersucht T-DEED-Aktionsvorhersagen als zusätzliche Kontaktevidenz. Er hat bisher keine Ballbesitzentscheidung verändert.
 
-Ballbesitz wechselt erst, wenn die andere Mannschaft den Ball **kontrolliert** übernimmt. Ein Abpraller oder eine bloße Berührung reicht dafür nicht aus. Bei einem freien oder umkämpften Ball bleibt der Besitz zunächst bei der zuletzt kontrollierenden Mannschaft. Bei einer Unterbrechung lautet das Label `D`, unabhängig davon, wer anschließend fortsetzt. Die [offizielle Aufgabenbeschreibung](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/CHALLENGE.md) erläutert diese Regeln.
+## Notebooks in Lesereihenfolge
 
-## Welche Daten stehen zur Verfügung?
+| Schritt | Notebook | Inhalt und Ergebnis |
+|---|---|---|
+| 1 | [01 · Vorbereitung](main%20approach/01_vorbereitung/01_vorbereitung.ipynb) | Tracking und gespeicherte Vorstufen → Physics v3 und Distanzdifferenz als NPZ |
+| 2 | [02 · Spatial Hybrid v1](main%20approach/02_spatial_hybrid_v1/02_spatial_hybrid_v1.ipynb) | Räumliche Kandidaten → zeitliche Ausrichtung → Diagnosen und vollständige CSVs |
+| 3 | [03 · Videoaktionen](main%20approach/03_videoaktionen/03_videoaktionen.ipynb) | Fünf automatische Clips → T-DEED auf CPU → Vorhersagen und lokale Videoansicht |
+| 4 | [04 · Kontaktdiagnose](main%20approach/04_kontaktdiagnose/04_kontaktdiagnose.ipynb) | Videoevents und Trackingkontakte → Zuordnung, Negativkontrolle und Featuretabelle |
+| 5 | [05 · Fusionspilot](main%20approach/05_fusionspilot/05_fusionspilot.ipynb) | Kontaktevidenz und begrenztes Grenzalignment → Vergleich mit v1 |
 
-Die Veranstalter stellen zwei Videoaufnahmen mit automatischem Tracking von Spielern und Ball bereit: eine taktische Aufnahme und eine TV-Aufnahme. Dazu kommen Homografien zur Zuordnung von Bild- und Spielfeldkoordinaten sowie automatisch erkannte taktische Phasen und Standardsituationen für die taktische Aufnahme.
+Bei vorhandener NPZ direkt mit Notebook 02 beginnen. Die Videostrecke 03–05 folgt danach in dieser Reihenfolge; Notebook 05 liest die von 03/04 erzeugten Ergebnisse unter `output/`.
 
-Die **taktische Aufnahme mit 25 Bildern pro Sekunde ist die Referenz für unsere Abgabe**. Die TV-Aufnahme hat eine eigene Zeitachse mit Schnitten und Wiederholungen. Wer sie zusätzlich nutzt, muss sie selbst mit der taktischen Aufnahme abgleichen.
+Jedes aktive Notebook folgt Eingaben → Methode → Berechnung → Ergebnisse → Fazit. Alle eigenen Imports stehen in der ersten Codezelle. Assertions, wiederholte Datei-Hashkontrollen, Audit-/Freigabetexte und automatische Langberichte sind aus diesen fünf Notebooks entfernt. Die frühere Fassung liegt unter `_archive/notebook_cleanup_20261029/`.
 
-Das Tracking ist unkorrigiert. Es enthält Lücken und wechselnde Track-Identitäten; auf rund **41 % der bewerteten Frames** fehlt der Ball im Tracking. Auch die taktischen Tags können falsch sein. Unser Verfahren muss mit diesen Fehlern umgehen können. Details stehen in der [Datendokumentation](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/DATA.md).
+## Bisherige Ergebnisse
 
-## Wie bewertet wird
+| Stand | Spell-F1 | Macro-F1 |
+|---|---:|---:|
+| Physics v3 | 0,543590 | 0,854311 |
+| Spatial Hybrid v1 | 0,564103 | 0,865360 |
 
-Für die Rangliste zählt **`spellF1`**. Diese Metrik prüft, wie gut vorhergesagte Ballbesitzphasen zeitlich mit den tatsächlichen Phasen übereinstimmen. Eine Phase ist ein durchgehender Abschnitt mit `H` oder `A`; eine Unterbrechung beendet sie. Häufige kurze Fehlwechsel können den Score deshalb stark verschlechtern.
+Historische Werte der offiziellen öffentlichen Evaluation vom 28. Oktober 2026; die aktiven Modellnotebooks zeigen sie als Vergleich und berechnen sie nicht erneut. Das bekannte Entwicklungsfenster umfasst 7.500 Frames; es ist kein unabhängiger Generalisierungsnachweis.
 
-Zusätzlich wird **`macroF1`** über die drei Klassen `H`, `A` und `D` berechnet. Dieser Wert bewertet die einzelnen Frames und dient als erstes Kriterium bei Gleichstand.
+- v1 verschiebt 150 von 258 direkten H/A-Grenzen und ändert insgesamt 2.143 Frames.
+- T-DEED erzeugt im bisherigen 60-Sekunden-Pilot 47 Vorhersagen: 25 PASS, 20 DRIVE, 2 HIGH PASS. Event-/Teamqualität ist nicht unabhängig validiert.
+- In der Kontaktdiagnose werden 19/47 Events innerhalb ±0,5 s zugeordnet. Die Negativkontrolle zeigt keine robuste überzufällige Ausrichtung.
+- Beide v2-Varianten ändern 0 Frames und 0 Besitzgrenzen. Die Clips überdecken das öffentliche Fenster nicht; der öffentliche Score kann ihren Fusionsnutzen nicht bewerten.
 
-Öffentlich verfügbar sind **fünf Minuten Referenzlabels mit 17 Ballbesitzphasen**. Damit können wir die Umsetzung prüfen, aber keine verlässliche Rangfolge unserer Ansätze bestimmen. Die endgültige Bewertung erfolgt auf der privaten Referenz des gesamten Spiels. Die offizielle Baseline `baseline_smooth50` erreicht dort einen `spellF1` von **0,2433**; das ist unser Vergleichswert, kein eigenes Ergebnis.
+## Lokal ausführen
 
-`X` wird unterschiedlich behandelt: Bei `macroF1` zählt es auf bewerteten Frames als Fehler. Für `spellF1` werden solche Lücken innerhalb jeder Halbzeit mit dem vorherigen Label gefüllt, am Anfang mit dem nächsten verfügbaren Label. Frames außerhalb der bewerteten Bereiche werden ignoriert. Die genaue Berechnung beschreibt die [offizielle Evaluation](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/EVALUATION.md).
+Benötigt werden die berechtigten lokalen Matchdaten unter `tactical/`, die [gespeicherten Eingaben](artifacts/README.md) und für Notebook 03 die [separate Video-Umgebung](artifacts/video_event_spotting/README.md). v1 wurde mit Python 3.11.7, NumPy 1.26.4, pandas 2.3.3 und Matplotlib 3.10.7 ausgeführt.
 
-## Potentielle Aufgaben
+Notebook 01 berechnet die Physics-v3-Eingaben mit vorhandenen Heuristik-, AdaBoost-/OOF-Vorhersagen und Bewegungsfeatures. Die frühere Hybridvorhersage dient nur als gespeicherter Vergleichswert für Notebook 02. Ein vollständiger Neuaufbau aller Vorstufen allein aus Rohdaten ist weiterhin nicht nachgewiesen.
 
-1. **Daten und Zeitachsen prüfen.** Tracking, Video und Zusatzinformationen korrekt zuordnen und die Datenlücken sichtbar machen.
-2. **Die offizielle Baseline nachvollziehen.** Ihre Ergebnisse reproduzieren und untersuchen, wo Ballbesitzwechsel und Unterbrechungen falsch erkannt werden.
-3. **Unser Verfahren entwickeln.** Die Unterscheidung zwischen kontrolliertem Besitz, bloßem Kontakt und ruhendem Spiel algorithmisch umsetzen. Annahmen und Änderungen ggf. in nachvollziehbaren Jupyter-Notebooks festhalten.
-4. **Die Ausgabe überprüfen.** Ergebnisse mit dem offiziellen Scorer prüfen und Fehler untersuchen. Die kurze öffentliche Referenz darf dabei nicht zur alleinigen Grundlage für die Auswahl und Abstimmung des Verfahrens werden.
-5. **Die Abgabe reproduzierbar machen.** Aus den bereitgestellten Daten muss sich dieselbe CSV erneut erzeugen lassen. Dazu dokumentieren wir Abhängigkeiten, Ausführung und Grenzen des Ansatzes.
+Die [Methodik](main%20approach/SPATIAL_HYBRID_V1_TEAM_METHODIK.md) erläutert Parameter und Herkunft. Neue quantitative Entwicklung benötigt zulässige unabhängige Daten.
 
-## Abgabe
+## Historische Quellen
 
-Die Abgabe besteht aus drei Teilen:
+- [Aufgabenbeschreibung und Abgabeüberblick](docs/CHALLENGE_OVERVIEW.md): bisherige Repository-README.
 
-- **Eine CSV-Datei** mit dem Header `frame,label` und genau **199.319 Datenzeilen**. Die Frames müssen lückenlos von `0` bis `199318` aufsteigend aufgeführt sein. Zulässige Labels sind `H`, `A`, `D` und `X`; leere Felder sind nicht erlaubt.
-- **Ein öffentliches Code-Repository**, das die Abgabedatei aus den bereitgestellten Daten exakt reproduzieren kann, einschließlich festgelegter Abhängigkeiten und Ausführungsanleitung.
-- **Eine kurze technische Dokumentation** als PDF oder Markdown: Vorgehen, verwendete Daten, umgesetzte Ballbesitzregeln, Einschränkungen und Reproduktion.
+- [Entwicklungsnotebook 05](main%20approach/05_hierachical_modell.ipynb) und [Vorstufen 04/06/08](main%20approach/upstream/README.md): erhaltene Originalentwicklung.
+- [Exploration](exploration/README.md) und [offizielle Baseline](evaluation/02_offizielle_baseline.ipynb): Datenverständnis und Ausgangsverfahren.
+- [Videopilot](reports/EVENT_SPOTTING_PILOT_REPORT.md), [Kontaktdiagnose](reports/ALIGNMENT_REPORT.md) und [Fusion](reports/FUSION_PILOT_REPORT.md): historische Berichte des Piloten.
+- [Abgeschlossener Audit](reports/compliance_audit/FINAL_COMPLIANCE_REPORT.md): historische Dokumentation; v1 bleibt gemäß Projektklarstellung vom 29. Oktober als Bestandsstand akzeptiert.
 
-Vor der Einreichung muss die endgültige CSV mit dem offiziellen `validate_submission.py` geprüft werden. CSV und technisches Dokument werden nach dem Team benannt. Es gibt eine Einreichung pro Team über das von den Veranstaltern per E-Mail bereitgestellte Formular.
+Originalentwicklung und historische Berichte bleiben unverändert. Ihre Zellnummern, Prüfabläufe und Pfade beschreiben die damaligen Fassungen.
 
-**Abgabefrist laut offizieller Dokumentation: 17. November 2026.** Maßgeblich sind die [aktuellen Einreichungsvorgaben](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/SUBMISSION.md).
+## Teamübergabe
 
-## Regeln für die Arbeit
+Für die Codeübergabe werden Notebook-Ausgaben entfernt; Rohdaten, Bilder, Clips, Trackingauszüge und externe Gewichte bleiben lokal. Das Übergabepaket dient dem Code-Review und benötigt die dokumentierten lokalen Eingaben zur Ausführung.
 
-Die eingereichten Labels müssen vollständig aus einem Algorithmus stammen. Sie dürfen nicht von Hand erstellt oder nachträglich frameweise korrigiert werden. Die private Referenz und andere Quellen korrigierter Ballbesitzdaten dieses Spiels dürfen wir nicht verwenden.
-
-Die Spieldaten sind ausschließlich für den Wettbewerb lizenziert. Videos, Trackingdaten und daraus rekonstruierbare Exporte gehören nicht in dieses Repository. Methoden und verwendete Ressourcen müssen für die Veranstalter zugänglich und prüfbar sein. Verbindlich sind die [offiziellen Regeln](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/RULES.md) und die bei der Anmeldung akzeptierten Nutzungsbedingungen.
+Dieses Paket enthält Codekopien ohne gespeicherte Notebook-Ausgaben. Archivstände, lokale Eingaben und in historischen Berichten erwähnte Evidenzdateien liegen im Gesamtprojekt; das Paket allein ist kein vollständiger Raw-to-Submission-Build.

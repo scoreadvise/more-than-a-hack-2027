@@ -14,7 +14,9 @@ All design choices were made by leave-one-match-out validation on the ten extern
 
 Used for the challenge match: the ATD tracking file and its XML metadata, nothing else. Video, homography and broadcast data were not used. Smart Tagging was used once only as an automatic plausibility check (do tagged set pieces fall on predicted restarts?), not as model input. We looked at the public 5-minute ground truth only after freezing a version, to check frame alignment and the file format.
 
-External: DFL/IDSSE open data (Bassek et al., 2025, CC BY 4.0) and Metrica Sports sample data (GitHub, commit `e706dd5`). For Metrica we derived possession labels automatically from the provided event data.
+Training data, all from other matches:
+- DFL/IDSSE open data (Bassek et al., 2025, CC BY 4.0): 7 Bundesliga matches, about 1.0 million labelled frames. The per-frame ball status and team possession come with the official DFL position data (TRACAB tracking); we did not label anything ourselves.
+- Metrica Sports sample data (GitHub, commit `e706dd5`): 3 matches, about 0.42 million labelled frames. The events were annotated by Metrica Sports; we turned them into frame labels automatically with a fixed rule (notebook 03).
 
 Tried and dropped: a separate decoder for team possession after stoppage detection, a touch/event layer from ball acceleration (its gain turned out to be an artefact of the perfect DFL ball), gap-bridging features, and snapping possession changes to the receiving player. None improved the external validation reliably.
 

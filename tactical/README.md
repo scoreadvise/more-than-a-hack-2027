@@ -1,3 +1,3 @@
-# Challenge-Eingaben
+# Challenge inputs
 
-Hier `BAR-ATH_tactical_atd.txt` und `BAR-ATH_tactical_atd.xml` ablegen. Ansatz 2 nutzt nur diese beiden Dateien. Video, Homographie und Smart Tagging werden nicht verwendet. Die Dateien sind nicht im Paket enthalten und dürfen nicht veröffentlicht werden.
+Put `BAR-ATH_tactical_atd.txt` and `BAR-ATH_tactical_atd.xml` here. The approach uses only these two files; video, homography and Smart Tagging are not used. The files are not part of this repository and must not be published.

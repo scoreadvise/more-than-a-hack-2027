@@ -1,15 +1,15 @@
-# Externe Daten · DFL/IDSSE Open Data
+# External data · DFL/IDSSE open data
 
-Externe Trainings- und Tuningdaten. **Andere Spiele** als Barcelona–Athletic; gemäß Regel-Mail vom 04.11.2026 ist Training/Tuning ausschließlich auf externen Daten erlaubt.
+External training and tuning data. These are **other matches** than Barcelona–Athletic; under the rules email of 2026-11-04, training and tuning are only allowed on external data.
 
-- **Quelle:** Figshare, Artikel 28196177, DOI [10.6084/m9.figshare.28196177](https://doi.org/10.6084/m9.figshare.28196177), veröffentlicht 02.02.2025. Spiegel: Hugging Face `pysport/idsse-data`.
-- **Inhalt:** 7 Spiele, 1. und 2. Bundesliga 2022/23, TRACAB-Positionsdaten mit 25 Hz (XML), Eventdaten, Matchinformationen. Ballframes enthalten `BallPossession` (1 = Heim, 2 = Auswärts) und `BallStatus` (0 = unterbrochen, 1 = aktiv).
-- **Lizenz:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Namensnennung von DFL und Paper, Lizenzlink, Änderungen kennzeichnen.
-- **Abruf:** 05.11.2026 per Figshare-API. `figshare_article.json` enthält die Original-Metadaten, `files.tsv` Dateiname, URL, MD5 und Größe, `manifest.json` zusätzlich SHA-256 der lokalen Dateien.
-- **Ablage:** Nur lokal unter `raw/`, nicht ins öffentliche Repository; dort wird stattdessen über `files.tsv` nachgeladen.
+- **Source:** figshare, article 28196177, DOI [10.6084/m9.figshare.28196177](https://doi.org/10.6084/m9.figshare.28196177), published 2025-02-02. Mirror: Hugging Face `pysport/idsse-data`.
+- **Content:** 7 matches, 1st and 2nd Bundesliga 2022/23, TRACAB position data at 25 Hz (XML), event data, match information. Ball frames contain `BallPossession` (1 = home, 2 = away) and `BallStatus` (0 = dead, 1 = alive).
+- **Licence:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Attribution to DFL and the paper, link to the licence, changes marked.
+- **Retrieved:** 2026-11-05 via the figshare API. `figshare_article.json` holds the original metadata, `files.tsv` file name, URL, MD5 and size, `manifest.json` additionally the SHA-256 of the local files.
+- **Storage:** local only, under `raw/`, not in the public repository; the repository downloads it via `files.tsv` instead.
 
-## Zitation
+## Citation
 
 Bassek, M., Rein, R., Weber, H. & Memmert, D. (2025). An integrated dataset of spatiotemporal and event data in elite soccer. *Scientific Data*. https://doi.org/10.1038/s41597-025-04505-y
 
-Data © DFL Deutsche Fußball Liga, lizenziert unter CC BY 4.0.
+Data © DFL Deutsche Fußball Liga, licensed under CC BY 4.0.

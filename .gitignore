@@ -1,4 +1,4 @@
-# Daten, die nicht veröffentlicht werden (Challenge-Daten, Rohdaten, Zwischenstände)
+# Data that is not published (challenge data, raw data, intermediate files)
 tactical/*
 !tactical/README.md
 external_data/*/raw/

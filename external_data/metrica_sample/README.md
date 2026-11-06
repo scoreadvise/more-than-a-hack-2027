@@ -1,8 +1,8 @@
-# Metrica Sports Sample Data
+# Metrica Sports sample data
 
-- Quelle: https://github.com/metrica-sports/sample-data, Commit `e706dd506b360d69d9d123d5b8026e7294b13996`, geladen am 2026-11-06 über raw.githubusercontent.com.
-- Inhalt: 3 anonymisierte Spiele mit Tracking (25 fps, Koordinaten 0–1, Feld 105 × 68 m) und synchronisierten Events. Spiel 1 und 2 liegen als CSV vor, Spiel 3 im EPTS-FIFA-Format (`.txt` + `.xml`) mit Events als JSON.
-- Prüfsummen: `sha256.txt` (SHA-256 je Datei in `raw/`).
-- Nutzung: Es gibt keine formale Lizenzdatei. Die README des Repositorys bittet um verantwortungsvolle Nutzung und um Quellenangabe bei öffentlicher Verwendung. Die Daten sind für Interessenten und die Analytics-Community zum Experimentieren veröffentlicht. Herausgeber ist Metrica Sports, der Ausrichter der Challenge. Eine Rückfrage beim Ausrichter zur Nutzung in der Challenge ist offen.
-- Verwendung: zusätzliche externe Trainings- und Validierungsspiele. Die Labels werden automatisch per dokumentierter Regel aus den Events dieser Spiele abgeleitet. Daten des Challenge-Spiels sind nicht betroffen.
-- Rohdaten und abgeleitete Frame-Daten kommen nicht ins öffentliche Repository. Dort steht nur das Skript bzw. der Link zum Laden.
+- Source: https://github.com/metrica-sports/sample-data, commit `e706dd506b360d69d9d123d5b8026e7294b13996`, downloaded on 2026-11-06 via raw.githubusercontent.com.
+- Content: 3 anonymised matches with tracking (25 fps, coordinates 0–1, pitch 105 × 68 m) and synchronised events. Matches 1 and 2 are CSV files, match 3 uses the EPTS FIFA format (`.txt` + `.xml`) with events as JSON.
+- Checksums: `sha256.txt` (SHA-256 per file in `raw/`).
+- Use: there is no formal licence file. The repository README asks for responsible use and for attribution when used publicly. The data was published for interested people and the analytics community to experiment with. The publisher is Metrica Sports, the organiser of the challenge. A question to the organiser about using it in the challenge is pending.
+- Role here: additional external training and validation matches. Labels are derived automatically from the events of these matches by a documented rule. Data of the challenge match is not involved.
+- Raw data and derived frame data are not in the public repository; it only contains the download command.

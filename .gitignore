@@ -1,0 +1,10 @@
+# Daten, die nicht veröffentlicht werden (Challenge-Daten, Rohdaten, Zwischenstände)
+tactical/*
+!tactical/README.md
+external_data/*/raw/
+artifacts/
+
+# macOS / Jupyter
+._*
+.DS_Store
+.ipynb_checkpoints/

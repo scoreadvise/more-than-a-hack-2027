@@ -1,60 +1,72 @@
-# More than a Hack 2027 – Ballbesitz erkennen
+# HSA Connection · Ballbesitz aus Tracking
 
-In der ersten Phase von **More than a Hack 2027** ist die Aufgabe ein Verfahren zu erstellen, das für jedes Videobild eines Fußballspiels erkennt, welche Mannschaft den Ball besitzt oder ob das Spiel unterbrochen ist. Diese README beschreibt die Aufgabe und die Anforderungen an die Abgabe. 
+Abgabe von Team **HSA Connection** für More Than A Hack 2027, Initial Challenge. Für jeden Frame von Barcelona–Athletic wird `H`, `A`, `D` oder `X` vorhergesagt, und zwar nur aus dem automatischen Tracking. Alle Modelle sind auf externen Spielen trainiert, nicht auf der Challenge-GT oder dem Video.
 
-## Die Aufgabe
+- Wie der Ansatz funktioniert und was er beachtet: [ERKLAERUNG.md](ERKLAERUNG.md)
+- Technisches Dokument für die Abgabe: [HSA_Connection.md](HSA_Connection.md) bzw. [HSA_Connection.pdf](HSA_Connection.pdf)
 
-Die Daten umfassen das Spiel **FC Barcelona gegen Athletic Club**, LaLiga 2024/25, zweiter Spieltag. Für jedes der **199.319 Frames** des taktischen Videos muss genau eines dieser Labels ausgeben werden:
+## Inhalt
 
-| Label | Bedeutung |
-| --- | --- |
-| `H` | Barcelona hat Ballbesitz, der Ball ist im Spiel. |
-| `A` | Athletic Club hat Ballbesitz, der Ball ist im Spiel. |
-| `D` | Der Ball ist nicht im Spiel, etwa bei einer Unterbrechung. |
-| `X` | Unser Verfahren gibt keine Antwort. |
+```
+├── notebooks/
+│   ├── 01_dfl_daten.ipynb       DFL-Spiele laden, H/A/D-Labels
+│   ├── 02_degradation.ipynb     DFL an die Ausfälle des Challenge-Trackings angleichen (d67s)
+│   ├── 03_metrica.ipynb         Metrica-Beispielspiele, Labels aus Events
+│   └── 04_abgabe.ipynb          Training, Kostenwahl, Vorhersage, CSV, Validierung
+├── output/                      eingefrorene Abgabe: HSA_Connection.csv, frozen_model.json, FREEZE.md
+├── external_data/               Download-Listen und Prüfsummen (ohne Rohdaten)
+├── reference/                   offizielles Challenge-Repository als Archiv (Scorer/Validator, MIT; github.com/metrica-sports/more-than-a-hack-2027, Commit 3de6b60)
+├── tactical/                    hier die Challenge-Eingaben ablegen (nicht enthalten)
+└── requirements.txt
+```
 
-Ballbesitz wechselt erst, wenn die andere Mannschaft den Ball **kontrolliert** übernimmt. Ein Abpraller oder eine bloße Berührung reicht dafür nicht aus. Bei einem freien oder umkämpften Ball bleibt der Besitz zunächst bei der zuletzt kontrollierenden Mannschaft. Bei einer Unterbrechung lautet das Label `D`, unabhängig davon, wer anschließend fortsetzt. Die [offizielle Aufgabenbeschreibung](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/CHALLENGE.md) erläutert diese Regeln.
+**Nicht enthalten:** Rohdaten (DFL 2,5 GB, Metrica 0,2 GB), Challenge-Daten und Zwischenstände (`artifacts/`, wird beim Lauf erzeugt). Die Challenge-Daten dürfen nicht weitergegeben werden.
 
-## Welche Daten stehen zur Verfügung?
+## Ergebnis
 
-Die Veranstalter stellen zwei Videoaufnahmen mit automatischem Tracking von Spielern und Ball bereit: eine taktische Aufnahme und eine TV-Aufnahme. Dazu kommen Homografien zur Zuordnung von Bild- und Spielfeldkoordinaten sowie automatisch erkannte taktische Phasen und Standardsituationen für die taktische Aufnahme.
+| spellF1, Leave-one-match-out über 10 externe Spiele | Metrica | DFL (degradiert) |
+|---|---:|---:|
+| Offizielle Baseline smooth50 | 0,405 | 0,214 |
+| **unser Ansatz** | **0,646** | **0,477** |
 
-Die **taktische Aufnahme mit 25 Bildern pro Sekunde ist die Referenz für unsere Abgabe**. Die TV-Aufnahme hat eine eigene Zeitachse mit Schnitten und Wiederholungen. Wer sie zusätzlich nutzt, muss sie selbst mit der taktischen Aufnahme abgleichen.
+Abgabedatei `output/HSA_Connection.csv`, SHA-256 `92a943257cf73aaa057aa81cf29902732b72f2b545b95410ae5b2608b1a0f8fb`, eingefroren am 06.11.2026.
 
-Das Tracking ist unkorrigiert. Es enthält Lücken und wechselnde Track-Identitäten; auf rund **41 % der bewerteten Frames** fehlt der Ball im Tracking. Auch die taktischen Tags können falsch sein. Unser Verfahren muss mit diesen Fehlern umgehen können. Details stehen in der [Datendokumentation](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/DATA.md).
+## Reproduktion
 
-## Wie bewertet wird
+1. Umgebung (Python 3.11):
 
-Für die Rangliste zählt **`spellF1`**. Diese Metrik prüft, wie gut vorhergesagte Ballbesitzphasen zeitlich mit den tatsächlichen Phasen übereinstimmen. Eine Phase ist ein durchgehender Abschnitt mit `H` oder `A`; eine Unterbrechung beendet sie. Häufige kurze Fehlwechsel können den Score deshalb stark verschlechtern.
+   ```bash
+   python3.11 -m venv ~/.venvs/mtah_v2 && ~/.venvs/mtah_v2/bin/pip install -r requirements.txt && ~/.venvs/mtah_v2/bin/python -m ipykernel install --user --name mtah_v2
+   ```
 
-Zusätzlich wird **`macroF1`** über die drei Klassen `H`, `A` und `D` berechnet. Dieser Wert bewertet die einzelnen Frames und dient als erstes Kriterium bei Gleichstand.
+2. DFL-Rohdaten laden (21 Dateien, ca. 2,5 GB, MD5 gegen Figshare geprüft):
 
-Öffentlich verfügbar sind **fünf Minuten Referenzlabels mit 17 Ballbesitzphasen**. Damit können wir die Umsetzung prüfen, aber keine verlässliche Rangfolge unserer Ansätze bestimmen. Die endgültige Bewertung erfolgt auf der privaten Referenz des gesamten Spiels. Die offizielle Baseline `baseline_smooth50` erreicht dort einen `spellF1` von **0,2433**; das ist unser Vergleichswert, kein eigenes Ergebnis.
+   ```bash
+   cd external_data/dfl_idsse && mkdir -p raw && while IFS=$'\t' read -r name url md5 size; do curl -sSL --retry 3 -o "raw/$name" "$url" && [ "$(md5 -q "raw/$name")" = "$md5" ] && echo "$name OK"; done < files.tsv
+   ```
 
-`X` wird unterschiedlich behandelt: Bei `macroF1` zählt es auf bewerteten Frames als Fehler. Für `spellF1` werden solche Lücken innerhalb jeder Halbzeit mit dem vorherigen Label gefüllt, am Anfang mit dem nächsten verfügbaren Label. Frames außerhalb der bewerteten Bereiche werden ignoriert. Die genaue Berechnung beschreibt die [offizielle Evaluation](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/EVALUATION.md).
+3. Metrica-Daten laden (9 Dateien, ca. 215 MB, Commit e706dd5, SHA-256 geprüft):
 
-## Potentielle Aufgaben
+   ```bash
+   cd external_data/metrica_sample && mkdir -p raw && for f in Sample_Game_1/Sample_Game_1_RawEventsData.csv Sample_Game_1/Sample_Game_1_RawTrackingData_Away_Team.csv Sample_Game_1/Sample_Game_1_RawTrackingData_Home_Team.csv Sample_Game_2/Sample_Game_2_RawEventsData.csv Sample_Game_2/Sample_Game_2_RawTrackingData_Away_Team.csv Sample_Game_2/Sample_Game_2_RawTrackingData_Home_Team.csv Sample_Game_3/Sample_Game_3_events.json Sample_Game_3/Sample_Game_3_metadata.xml Sample_Game_3/Sample_Game_3_tracking.txt; do curl -sSL -o "raw/$(basename $f)" "https://raw.githubusercontent.com/metrica-sports/sample-data/e706dd506b360d69d9d123d5b8026e7294b13996/data/$f"; done && (cd raw && shasum -a 256 -c ../sha256.txt --ignore-missing)
+   ```
 
-1. **Daten und Zeitachsen prüfen.** Tracking, Video und Zusatzinformationen korrekt zuordnen und die Datenlücken sichtbar machen.
-2. **Die offizielle Baseline nachvollziehen.** Ihre Ergebnisse reproduzieren und untersuchen, wo Ballbesitzwechsel und Unterbrechungen falsch erkannt werden.
-3. **Unser Verfahren entwickeln.** Die Unterscheidung zwischen kontrolliertem Besitz, bloßem Kontakt und ruhendem Spiel algorithmisch umsetzen. Annahmen und Änderungen ggf. in nachvollziehbaren Jupyter-Notebooks festhalten.
-4. **Die Ausgabe überprüfen.** Ergebnisse mit dem offiziellen Scorer prüfen und Fehler untersuchen. Die kurze öffentliche Referenz darf dabei nicht zur alleinigen Grundlage für die Auswahl und Abstimmung des Verfahrens werden.
-5. **Die Abgabe reproduzierbar machen.** Aus den bereitgestellten Daten muss sich dieselbe CSV erneut erzeugen lassen. Dazu dokumentieren wir Abhängigkeiten, Ausführung und Grenzen des Ansatzes.
+4. `BAR-ATH_tactical_atd.txt` und `BAR-ATH_tactical_atd.xml` nach `tactical/` kopieren.
 
-## Abgabe
+5. Die vier Notebooks der Reihe nach ausführen:
 
-Die Abgabe besteht aus drei Teilen:
+   ```bash
+   cd notebooks && for nb in 01_dfl_daten 02_degradation 03_metrica 04_abgabe; do ~/.venvs/mtah_v2/bin/jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=mtah_v2 --ExecutePreprocessor.timeout=10800 $nb.ipynb; done
+   ```
 
-- **Eine CSV-Datei** mit dem Header `frame,label` und genau **199.319 Datenzeilen**. Die Frames müssen lückenlos von `0` bis `199318` aufsteigend aufgeführt sein. Zulässige Labels sind `H`, `A`, `D` und `X`; leere Felder sind nicht erlaubt.
-- **Ein öffentliches Code-Repository**, das die Abgabedatei aus den bereitgestellten Daten exakt reproduzieren kann, einschließlich festgelegter Abhängigkeiten und Ausführungsanleitung.
-- **Eine kurze technische Dokumentation** als PDF oder Markdown: Vorgehen, verwendete Daten, umgesetzte Ballbesitzregeln, Einschränkungen und Reproduktion.
+Notebook 04 schreibt `output/HSA_Connection.csv` und gibt den SHA-256 aus. Mit den gepinnten Paketen ist die Datei bitgleich mit der Abgabe.
 
-Vor der Einreichung muss die endgültige CSV mit dem offiziellen `validate_submission.py` geprüft werden. CSV und technisches Dokument werden nach dem Team benannt. Es gibt eine Einreichung pro Team über das von den Veranstaltern per E-Mail bereitgestellte Formular.
+Hinweis für macOS mit ExFAT-Laufwerken: Die venv nicht auf das Laufwerk legen, die `._`-Dateien von macOS stören Python.
 
-**Abgabefrist laut offizieller Dokumentation: 17. November 2026.** Maßgeblich sind die [aktuellen Einreichungsvorgaben](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/SUBMISSION.md).
+## Daten und Lizenz
 
-## Regeln für die Arbeit
+- DFL/IDSSE: Bassek, Rein, Weber & Memmert (2025), *Scientific Data*, https://doi.org/10.1038/s41597-025-04505-y. Daten © DFL Deutsche Fußball Liga, CC BY 4.0.
+- Metrica Sports Sample Data (https://github.com/metrica-sports/sample-data, Commit e706dd5): 3 anonymisierte Spiele ohne formale Lizenzdatei; die README bittet um Quellenangabe. Details in `external_data/metrica_sample/README.md`.
+- Challenge-Daten und daraus abgeleitete Frame-Daten bleiben lokal.
 
-Die eingereichten Labels müssen vollständig aus einem Algorithmus stammen. Sie dürfen nicht von Hand erstellt oder nachträglich frameweise korrigiert werden. Die private Referenz und andere Quellen korrigierter Ballbesitzdaten dieses Spiels dürfen wir nicht verwenden.
-
-Die Spieldaten sind ausschließlich für den Wettbewerb lizenziert. Videos, Trackingdaten und daraus rekonstruierbare Exporte gehören nicht in dieses Repository. Methoden und verwendete Ressourcen müssen für die Veranstalter zugänglich und prüfbar sein. Verbindlich sind die [offiziellen Regeln](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/RULES.md) und die bei der Anmeldung akzeptierten Nutzungsbedingungen.
+Die Entwicklung (Notebooks zu Varianten, Fehleranalysen und verworfenen Ideen) liegt im Hauptprojekt unter `approach_v2/` und ist nicht Teil dieses Pakets.
